@@ -2,6 +2,16 @@
 
 A playful browser game to help kids learn **shapes** and **colors** through quick rounds, voice prompts, and instant feedback.
 
+## Preview
+
+### Start Screen
+
+![Start Screen](preview/start-screen.png)
+
+### Gameplay
+
+![Gameplay](preview/gameplay.png)
+
 ## Features
 
 - Interactive rounds with prompts like `Find the red circle!`
@@ -43,6 +53,8 @@ Open:
 
 - `index.html` - complete app (markup, styling, logic)
 - `README.md` - project documentation
+- `preview/start-screen.png` - screenshot of start screen
+- `preview/gameplay.png` - screenshot of gameplay
 
 ## Customization
 
