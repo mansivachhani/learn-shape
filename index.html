@@ -264,9 +264,9 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       gap: 12px;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
     }
 
     h1 {
@@ -279,6 +279,8 @@
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
+      width: 100%;
+      margin-bottom: 14px;
     }
 
     .pill {
@@ -288,6 +290,168 @@
       padding: 8px 12px;
       font-weight: 700;
       font-size: 0.95rem;
+    }
+
+    .progress-pill {
+      background: #f7fbff;
+      border: 1px solid #d9e7ff;
+      border-radius: 12px;
+      width: 100%;
+      padding: 10px 12px;
+    }
+
+    .progress-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+      font-size: 0.92rem;
+      margin-bottom: 6px;
+    }
+
+    .progress-track {
+      height: 12px;
+      border-radius: 999px;
+      background: #dfeeff;
+      overflow: hidden;
+      box-shadow: inset 0 1px 2px rgba(34, 63, 98, 0.18);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #34d399, #22c55e);
+      border-radius: inherit;
+      transition: width 260ms ease;
+    }
+
+    .progress-notes {
+      margin-top: 7px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #365980;
+    }
+
+    .shape-badge-grid {
+      margin-top: 9px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(54px, 1fr));
+      gap: 6px;
+    }
+
+    .shape-badge {
+      border: 1px solid #dbe9ff;
+      background: #f9fcff;
+      border-radius: 8px;
+      padding: 5px 4px 4px;
+      text-align: center;
+      position: relative;
+      transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+    }
+
+    .shape-badge.learned {
+      border-color: #7dd3a6;
+      background: #effdf4;
+      box-shadow: 0 7px 14px rgba(21, 128, 61, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .shape-badge-name {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.62rem;
+      font-weight: 800;
+      color: #3a587f;
+      line-height: 1.05;
+      text-transform: capitalize;
+      overflow-wrap: anywhere;
+    }
+
+    .shape-check {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 15px;
+      height: 15px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: #16a34a;
+      color: #fff;
+      font-size: 0.58rem;
+      font-weight: 900;
+      border: 1px solid #fff;
+      box-shadow: 0 3px 7px rgba(22, 163, 74, 0.35);
+    }
+
+    .mini-shape {
+      width: 16px;
+      height: 16px;
+      margin: 0 auto;
+      --mini-base: #4f86e6;
+      --mini-light: #9bc0ff;
+      --mini-dark: #2f5fab;
+      filter: drop-shadow(0 4px 5px rgba(37, 56, 86, 0.2));
+    }
+
+    .mini-shape.circle {
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 28%, var(--mini-light) 0%, var(--mini-base) 62%, var(--mini-dark) 100%);
+    }
+
+    .mini-shape.square {
+      border-radius: 5px;
+      background: linear-gradient(145deg, var(--mini-light) 0%, var(--mini-base) 56%, var(--mini-dark) 100%);
+    }
+
+    .mini-shape.triangle {
+      clip-path: polygon(50% 3%, 96% 90%, 4% 90%);
+      background: linear-gradient(155deg, var(--mini-light) 0%, var(--mini-base) 52%, var(--mini-dark) 100%);
+    }
+
+    .mini-shape.star {
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      background: linear-gradient(155deg, var(--mini-light) 0%, var(--mini-base) 52%, var(--mini-dark) 100%);
+    }
+
+    .mini-shape.diamond {
+      transform: rotate(45deg);
+      border-radius: 4px;
+      background: linear-gradient(145deg, var(--mini-light) 0%, var(--mini-base) 56%, var(--mini-dark) 100%);
+    }
+
+    .mini-shape.oval {
+      border-radius: 50% / 35%;
+      background: radial-gradient(ellipse at 30% 30%, var(--mini-light) 0%, var(--mini-base) 62%, var(--mini-dark) 100%);
+    }
+
+    .mini-shape.rectangle {
+      width: 22px;
+      height: 14px;
+      border-radius: 4px;
+      background: linear-gradient(145deg, var(--mini-light) 0%, var(--mini-base) 56%, var(--mini-dark) 100%);
+    }
+
+    .mini-shape.hexagon {
+      clip-path: polygon(25% 6%, 75% 6%, 98% 50%, 75% 94%, 25% 94%, 2% 50%);
+      background: linear-gradient(155deg, var(--mini-light) 0%, var(--mini-base) 52%, var(--mini-dark) 100%);
+    }
+
+    .mini-shape.pentagon {
+      clip-path: polygon(50% 2%, 96% 36%, 80% 96%, 20% 96%, 4% 36%);
+      background: linear-gradient(155deg, var(--mini-light) 0%, var(--mini-base) 52%, var(--mini-dark) 100%);
+    }
+
+    .mastery-banner {
+      margin-top: 10px;
+      border-radius: 10px;
+      border: 1px solid #fcd34d;
+      background: linear-gradient(145deg, #fff6d8, #ffefbf);
+      color: #7a4a00;
+      font-weight: 800;
+      font-size: 0.86rem;
+      padding: 8px 10px;
+      animation: popIn 380ms ease;
     }
 
     .prompt {
@@ -443,6 +607,29 @@
       background: linear-gradient(145deg, var(--shape-light) 0%, var(--shape-base) 56%, var(--shape-dark) 100%);
     }
 
+    .oval {
+      border-radius: 50% / 35%;
+      background: radial-gradient(ellipse at 30% 30%, var(--shape-light) 0%, var(--shape-base) 62%, var(--shape-dark) 100%);
+    }
+
+    .rectangle {
+      width: 94px;
+      height: 68px;
+      border-radius: 10px;
+      background: linear-gradient(145deg, var(--shape-light) 0%, var(--shape-base) 56%, var(--shape-dark) 100%);
+    }
+
+    .hexagon {
+      clip-path: polygon(25% 6%, 75% 6%, 98% 50%, 75% 94%, 25% 94%, 2% 50%);
+      background: linear-gradient(155deg, var(--shape-light) 0%, var(--shape-base) 52%, var(--shape-dark) 100%);
+    }
+
+    .pentagon {
+      clip-path: polygon(50% 2%, 96% 36%, 80% 96%, 20% 96%, 4% 36%);
+      background: linear-gradient(155deg, var(--shape-light) 0%, var(--shape-base) 52%, var(--shape-dark) 100%);
+    }
+
+
 
     .tile-label {
       position: absolute;
@@ -526,6 +713,11 @@
       60% { transform: translateY(-2px); }
     }
 
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(6px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
     @media (max-width: 620px) {
       .app {
         padding: 14px;
@@ -551,6 +743,24 @@
         height: 70px;
       }
 
+      .progress-pill {
+        width: 100%;
+        padding: 8px 9px;
+      }
+
+      .shape-badge-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 5px;
+      }
+
+      .shape-badge {
+        padding: 4px 3px 3px;
+      }
+
+      .shape-badge-name {
+        font-size: 0.56rem;
+      }
+
     }
   </style>
 </head>
@@ -561,7 +771,7 @@
         <span class="welcome-badge">Learning Adventure</span>
         <h2>Shape & Color Safari</h2>
         <p>
-          Hear the clue, spot the matching shape, and build your streak.
+          Hear the clue, spot the matching shape, and build shape mastery.
           Fast rounds, instant feedback, and playful progression make learning stick.
         </p>
 
@@ -587,10 +797,20 @@
     <div id="gameShell" hidden>
       <section class="top">
         <h1>Shape & Color Safari</h1>
-        <div class="stats">
-          <div class="pill">Score: <span id="score">0</span></div>
-          <div class="pill">Streak: <span id="streak">0</span></div>
-          <div class="pill">Level: <span id="level">1</span></div>
+      </section>
+
+      <section class="stats">
+        <div class="progress-pill">
+          <div class="progress-head">
+            <span>Shapes Known</span>
+            <span id="knownCount">0/0</span>
+          </div>
+          <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0">
+            <div id="shapeProgressBar" class="progress-fill"></div>
+          </div>
+          <div id="knownShapesText" class="progress-notes">Known: none yet</div>
+          <div id="shapeBadgeGrid" class="shape-badge-grid"></div>
+          <div id="masteryBanner" class="mastery-banner" hidden>🏆 Master of Shapes! 🎉 All shapes are learned.</div>
         </div>
       </section>
 
@@ -612,7 +832,17 @@
   </main>
 
   <script>
-    const SHAPES = ["circle", "square", "triangle", "star", "diamond"];
+    const SHAPES = [
+      "circle",
+      "square",
+      "triangle",
+      "star",
+      "diamond",
+      "oval",
+      "rectangle",
+      "hexagon",
+      "pentagon"
+    ];
     const COLORS = [
       { name: "red", hex: "#ef4444" },
       { name: "blue", hex: "#3b82f6" },
@@ -632,17 +862,19 @@
     const nextBtn = document.getElementById("nextBtn");
     const startBtn = document.getElementById("startBtn");
     const speakBtn = document.getElementById("speakBtn");
-    const scoreEl = document.getElementById("score");
-    const streakEl = document.getElementById("streak");
-    const levelEl = document.getElementById("level");
+    const knownCountEl = document.getElementById("knownCount");
+    const shapeProgressBar = document.getElementById("shapeProgressBar");
+    const knownShapesText = document.getElementById("knownShapesText");
+    const progressTrack = document.querySelector(".progress-track");
+    const shapeBadgeGrid = document.getElementById("shapeBadgeGrid");
+    const masteryBanner = document.getElementById("masteryBanner");
 
     const game = {
-      score: 0,
-      streak: 0,
-      level: 1,
+      knownShapes: new Set(),
       target: null,
       active: false,
-      answered: false
+      answered: false,
+      masteryCelebrated: false
     };
 
     function randomItem(arr) {
@@ -666,10 +898,55 @@
       return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
     }
 
-    function updateStats() {
-      scoreEl.textContent = String(game.score);
-      streakEl.textContent = String(game.streak);
-      levelEl.textContent = String(game.level);
+    function updateProgress() {
+      const known = [...game.knownShapes];
+      const total = SHAPES.length;
+      const percent = (known.length / total) * 100;
+
+      knownCountEl.textContent = `${known.length}/${total}`;
+      shapeProgressBar.style.width = `${percent}%`;
+      progressTrack.setAttribute("aria-valuemax", String(total));
+      progressTrack.setAttribute("aria-valuenow", String(known.length));
+      renderShapeBadges();
+      masteryBanner.hidden = known.length !== total;
+
+      if (known.length === 0) {
+        knownShapesText.textContent = "Known: none yet";
+        return;
+      }
+
+      const titleCase = (shape) => shape.charAt(0).toUpperCase() + shape.slice(1);
+      knownShapesText.textContent = `Known: ${known.map(titleCase).join(", ")}`;
+    }
+
+    function renderShapeBadges() {
+      shapeBadgeGrid.innerHTML = "";
+      SHAPES.forEach((shape) => {
+        const badge = document.createElement("div");
+        const learned = game.knownShapes.has(shape);
+        badge.className = `shape-badge${learned ? " learned" : ""}`;
+
+        const mini = document.createElement("span");
+        mini.className = `mini-shape ${shape}`;
+        mini.style.setProperty("--mini-base", "#3b82f6");
+        mini.style.setProperty("--mini-light", "#93c5fd");
+        mini.style.setProperty("--mini-dark", "#1d4ed8");
+
+        const name = document.createElement("span");
+        name.className = "shape-badge-name";
+        name.textContent = shape;
+
+        badge.append(mini, name);
+
+        if (learned) {
+          const check = document.createElement("span");
+          check.className = "shape-check";
+          check.textContent = "✓";
+          badge.appendChild(check);
+        }
+
+        shapeBadgeGrid.appendChild(badge);
+      });
     }
 
     function speak(text) {
@@ -714,7 +991,7 @@
       message.className = "message";
       nextBtn.hidden = true;
 
-      const cardsCount = Math.min(12, 6 + game.level);
+      const cardsCount = Math.min(10, 6 + game.knownShapes.size);
       const options = [];
       const used = new Set();
 
@@ -727,7 +1004,12 @@
         options.push({ shape, color });
       }
 
-      game.target = randomItem(options);
+      const unknownShapes = SHAPES.filter((shape) => !game.knownShapes.has(shape));
+      const preferredOptions = unknownShapes.length > 0
+        ? options.filter((item) => unknownShapes.includes(item.shape))
+        : options;
+
+      game.target = randomItem(preferredOptions.length > 0 ? preferredOptions : options);
       board.innerHTML = "";
       shuffle(options).forEach((item) => board.appendChild(createCard(item)));
 
@@ -749,16 +1031,18 @@
 
       if (isCorrect) {
         tile.classList.add("correct");
-        game.score += 10 + game.level;
-        game.streak += 1;
-        if (game.streak % 3 === 0) game.level += 1;
-        message.textContent = "Awesome! You found it.";
+        const learnedShape = game.target.shape;
+        const isNewShape = !game.knownShapes.has(learnedShape);
+        game.knownShapes.add(learnedShape);
+        const label = learnedShape.charAt(0).toUpperCase() + learnedShape.slice(1);
+
+        message.textContent = isNewShape
+          ? `Awesome! New shape learned: ${label}.`
+          : `Awesome! ${label} is already strong.`;
         message.className = "message good";
         speak("Awesome! That's correct.");
       } else {
         tile.classList.add("wrong");
-        game.streak = 0;
-        game.score = Math.max(0, game.score - 4);
 
         [...board.children].forEach((node) => {
           if (node.dataset.shape === game.target.shape && node.dataset.color === game.target.color.name) {
@@ -771,7 +1055,13 @@
         speak(`Try again next round. That was ${tile.dataset.color} ${tile.dataset.shape}.`);
       }
 
-      updateStats();
+      updateProgress();
+      if (game.knownShapes.size === SHAPES.length && !game.masteryCelebrated) {
+        game.masteryCelebrated = true;
+        message.textContent = "🏆 Master of Shapes! All shapes learned.";
+        message.className = "message good";
+        speak("Amazing! Master of shapes.");
+      }
       game.active = false;
       nextBtn.hidden = false;
     }
@@ -779,10 +1069,9 @@
     function startGame() {
       welcomeScreen.hidden = true;
       gameShell.hidden = false;
-      game.score = 0;
-      game.streak = 0;
-      game.level = 1;
-      updateStats();
+      game.knownShapes = new Set();
+      game.masteryCelebrated = false;
+      updateProgress();
       newRound();
     }
 

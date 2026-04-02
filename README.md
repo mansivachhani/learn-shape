@@ -38,9 +38,9 @@ From the project folder:
 python3 -m http.server 4173
 ```
 
-Open:
+Live Demo:
 
-- http://127.0.0.1:4173/index.html
+- https://learn-shape.vercel.app/
 
 ## Gameplay
 
