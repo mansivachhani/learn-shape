@@ -294,13 +294,37 @@
       margin-bottom: 14px;
     }
 
+    .score-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      width: 100%;
+    }
+
     .pill {
       background: #f1f6ff;
       border: 1px solid #d9e7ff;
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-weight: 600;
+      border-radius: 16px;
+      padding: 10px 12px;
+      font-weight: 700;
       font-size: 0.95rem;
+      min-height: 72px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .pill-label {
+      font-size: 0.74rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #5d7398;
+    }
+
+    .pill-value {
+      font-size: 1.3rem;
+      color: #243754;
     }
 
     .progress-pill {
@@ -730,6 +754,19 @@
       border-color: #2b4060;
     }
 
+    body.dark .pill {
+      background: #152235;
+      border-color: #2b4060;
+    }
+
+    body.dark .pill-label {
+      color: #9fb4d4;
+    }
+
+    body.dark .pill-value {
+      color: #edf4ff;
+    }
+
     body.dark .progress-track {
       background: #1f334d;
     }
@@ -920,6 +957,24 @@
       </section>
 
       <section class="stats">
+        <div class="score-row">
+          <div class="pill">
+            <span class="pill-label">Score</span>
+            <span id="scoreValue" class="pill-value">0</span>
+          </div>
+          <div class="pill">
+            <span class="pill-label">Streak</span>
+            <span id="streakValue" class="pill-value">0</span>
+          </div>
+          <div class="pill">
+            <span class="pill-label">Best Streak</span>
+            <span id="bestStreakValue" class="pill-value">0</span>
+          </div>
+          <div class="pill">
+            <span class="pill-label">Level</span>
+            <span id="levelValue" class="pill-value">1</span>
+          </div>
+        </div>
         <div class="progress-pill">
           <div class="progress-head">
             <span>Shapes Known</span>
@@ -982,6 +1037,10 @@
     const nextBtn = document.getElementById("nextBtn");
     const startBtn = document.getElementById("startBtn");
     const speakBtn = document.getElementById("speakBtn");
+    const scoreValue = document.getElementById("scoreValue");
+    const streakValue = document.getElementById("streakValue");
+    const bestStreakValue = document.getElementById("bestStreakValue");
+    const levelValue = document.getElementById("levelValue");
     const knownCountEl = document.getElementById("knownCount");
     const shapeProgressBar = document.getElementById("shapeProgressBar");
     const progressTrack = document.querySelector(".progress-track");
@@ -995,7 +1054,11 @@
       target: null,
       active: false,
       answered: false,
-      masteryCelebrated: false
+      masteryCelebrated: false,
+      score: 0,
+      streak: 0,
+      bestStreak: Number.parseInt(localStorage.getItem("shapeSafariBestStreak") || "0", 10),
+      level: 1
     };
 
     function randomItem(arr) {
@@ -1017,6 +1080,13 @@
       const g = clamp(((value >> 8) & 0x00ff) + amount);
       const b = clamp((value & 0x0000ff) + amount);
       return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
+    }
+
+    function updateScoreboard() {
+      scoreValue.textContent = String(game.score);
+      streakValue.textContent = String(game.streak);
+      bestStreakValue.textContent = String(game.bestStreak);
+      levelValue.textContent = String(game.level);
     }
 
     function updateProgress() {
@@ -1179,15 +1249,23 @@
         const learnedShape = game.target.shape;
         const isNewShape = !game.knownShapes.has(learnedShape);
         game.knownShapes.add(learnedShape);
+        game.streak += 1;
+        game.score += isNewShape ? 12 : 8;
+        game.level = 1 + Math.floor(game.score / 40);
+        if (game.streak > game.bestStreak) {
+          game.bestStreak = game.streak;
+          localStorage.setItem("shapeSafariBestStreak", String(game.bestStreak));
+        }
         const label = learnedShape.charAt(0).toUpperCase() + learnedShape.slice(1);
 
         message.textContent = isNewShape
-          ? `Awesome! New shape learned: ${label}.`
-          : `Awesome! ${label} is already strong.`;
+          ? `Awesome! New shape learned: ${label}. +12 points.`
+          : `Awesome! ${label} is already strong. +8 points.`;
         message.className = "message good";
         speak("Awesome! That's correct.");
       } else {
         tile.classList.add("wrong");
+        game.streak = 0;
 
         [...board.children].forEach((node) => {
           if (node.dataset.shape === game.target.shape && node.dataset.color === game.target.color.name) {
@@ -1200,6 +1278,7 @@
         speak(`Try again next round. That was ${tile.dataset.color} ${tile.dataset.shape}.`);
       }
 
+      updateScoreboard();
       updateProgress();
       if (game.knownShapes.size === SHAPES.length && !game.masteryCelebrated) {
         game.masteryCelebrated = true;
@@ -1217,6 +1296,10 @@
       gameShell.hidden = false;
       game.knownShapes = new Set();
       game.masteryCelebrated = false;
+      game.score = 0;
+      game.streak = 0;
+      game.level = 1;
+      updateScoreboard();
       updateProgress();
       newRound();
     }
@@ -1250,6 +1333,9 @@
     const params = new URLSearchParams(window.location.search);
     if (params.get("autostart") === "1") {
       startGame();
+    } else {
+      updateScoreboard();
+      updateProgress();
     }
   </script>
 </body>
