@@ -539,6 +539,14 @@
       color: #2d4f76;
     }
 
+    .btn-alt:disabled,
+    .btn-main:disabled,
+    .theme-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .theme-btn {
       background: #eef5ff;
       color: #243754;
@@ -707,6 +715,12 @@
 
     .message.bad {
       color: var(--bad);
+    }
+
+    .tile.dimmed {
+      opacity: 0.28;
+      transform: scale(0.98);
+      pointer-events: none;
     }
 
     body.dark .app {
@@ -992,6 +1006,7 @@
         <p id="promptText">Tap Start to begin your safari challenge.</p>
         <div>
           <button id="speakBtn" class="btn btn-alt" type="button">🔊 Hear</button>
+          <button id="hintBtn" class="btn btn-alt" type="button">💡 Use Hint</button>
           <button id="startBtn" class="btn btn-main" type="button">↻ Restart</button>
         </div>
       </section>
@@ -1037,6 +1052,7 @@
     const nextBtn = document.getElementById("nextBtn");
     const startBtn = document.getElementById("startBtn");
     const speakBtn = document.getElementById("speakBtn");
+    const hintBtn = document.getElementById("hintBtn");
     const scoreValue = document.getElementById("scoreValue");
     const streakValue = document.getElementById("streakValue");
     const bestStreakValue = document.getElementById("bestStreakValue");
@@ -1058,7 +1074,8 @@
       score: 0,
       streak: 0,
       bestStreak: Number.parseInt(localStorage.getItem("shapeSafariBestStreak") || "0", 10),
-      level: 1
+      level: 1,
+      hintUsed: false
     };
 
     function randomItem(arr) {
@@ -1200,10 +1217,13 @@
     function newRound() {
       game.active = true;
       game.answered = false;
+      game.hintUsed = false;
       message.textContent = "";
       message.className = "message";
       nextBtn.hidden = true;
       nextBtn.classList.remove("btn-jumpy");
+      hintBtn.disabled = false;
+      hintBtn.textContent = "💡 Use Hint";
 
       const cardsCount = Math.min(10, 6 + game.knownShapes.size);
       const options = [];
@@ -1232,6 +1252,29 @@
       speak(line);
     }
 
+    function useHint() {
+      if (!game.active || game.answered || game.hintUsed || !game.target) return;
+
+      const wrongTiles = [...board.children].filter((node) =>
+        !(node.dataset.shape === game.target.shape && node.dataset.color === game.target.color.name)
+      );
+
+      if (wrongTiles.length < 2) return;
+
+      const tilesToDim = shuffle(wrongTiles).slice(0, Math.floor(wrongTiles.length / 2));
+      tilesToDim.forEach((node) => {
+        node.classList.add("dimmed");
+        node.disabled = true;
+      });
+
+      game.hintUsed = true;
+      hintBtn.disabled = true;
+      hintBtn.textContent = "💡 Hint Used";
+      message.textContent = `Hint used. ${tilesToDim.length} wrong choices removed.`;
+      message.className = "message";
+      speak("Here's a hint. Some wrong choices are gone.");
+    }
+
     function onTileClick(event) {
       if (!game.active || game.answered) return;
       game.answered = true;
@@ -1248,9 +1291,12 @@
         tile.classList.add("correct");
         const learnedShape = game.target.shape;
         const isNewShape = !game.knownShapes.has(learnedShape);
+        const earnedPoints = isNewShape
+          ? (game.hintUsed ? 9 : 12)
+          : (game.hintUsed ? 6 : 8);
         game.knownShapes.add(learnedShape);
         game.streak += 1;
-        game.score += isNewShape ? 12 : 8;
+        game.score += earnedPoints;
         game.level = 1 + Math.floor(game.score / 40);
         if (game.streak > game.bestStreak) {
           game.bestStreak = game.streak;
@@ -1259,8 +1305,8 @@
         const label = learnedShape.charAt(0).toUpperCase() + learnedShape.slice(1);
 
         message.textContent = isNewShape
-          ? `Awesome! New shape learned: ${label}. +12 points.`
-          : `Awesome! ${label} is already strong. +8 points.`;
+          ? `Awesome! New shape learned: ${label}. +${earnedPoints} points${game.hintUsed ? " with a hint." : "."}`
+          : `Awesome! ${label} is already strong. +${earnedPoints} points${game.hintUsed ? " with a hint." : "."}`;
         message.className = "message good";
         speak("Awesome! That's correct.");
       } else {
@@ -1287,6 +1333,7 @@
         speak("Amazing! Master of shapes.");
       }
       game.active = false;
+      hintBtn.disabled = true;
       nextBtn.hidden = false;
       if (isCorrect) nextBtn.classList.add("btn-jumpy");
     }
@@ -1316,6 +1363,8 @@
       }
       speak(challengeLine());
     });
+
+    hintBtn.addEventListener("click", useHint);
 
     themeToggle.addEventListener("click", () => {
       const isDark = document.body.classList.contains("dark");
