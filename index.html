@@ -501,6 +501,39 @@
       font-size: clamp(1rem, 2vw, 1.2rem);
     }
 
+    .coach-panel {
+      margin-bottom: 16px;
+      background: #f5faff;
+      border: 1px solid #d7e7ff;
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .coach-title {
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: #55709b;
+    }
+
+    .coach-tip {
+      margin: 0;
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #243754;
+    }
+
+    .coach-queue {
+      margin: 0;
+      color: #587296;
+      font-size: 0.9rem;
+      font-weight: 600;
+      min-height: 1.2em;
+    }
+
     .btn {
       border: 0;
       border-radius: 12px;
@@ -751,6 +784,23 @@
     body.dark .prompt {
       background: #17263a;
       border-color: #35527c;
+    }
+
+    body.dark .coach-panel {
+      background: #152235;
+      border-color: #2b4060;
+    }
+
+    body.dark .coach-title {
+      color: #9fb4d4;
+    }
+
+    body.dark .coach-tip {
+      color: #edf4ff;
+    }
+
+    body.dark .coach-queue {
+      color: #b8c8df;
     }
 
     body.dark .tile {
@@ -1011,6 +1061,12 @@
         </div>
       </section>
 
+      <section class="coach-panel" aria-live="polite">
+        <span class="coach-title">Learning Coach</span>
+        <p id="coachTip" class="coach-tip">Start a round to get a shape tip.</p>
+        <p id="coachQueue" class="coach-queue"></p>
+      </section>
+
       <section id="board" class="board" aria-live="polite"></section>
 
       <section class="footer">
@@ -1042,6 +1098,17 @@
       { name: "pink", hex: "#ec4899" },
       { name: "orange", hex: "#f97316" }
     ];
+    const SHAPE_FACTS = {
+      circle: "A circle is perfectly round with no corners.",
+      square: "A square has 4 equal sides and 4 corners.",
+      triangle: "A triangle has 3 sides and 3 corners.",
+      star: "A star has pointed tips that stick out.",
+      diamond: "A diamond looks like a square turned on its point.",
+      oval: "An oval is round and stretched like an egg.",
+      rectangle: "A rectangle has 4 corners with 2 long sides and 2 short sides.",
+      hexagon: "A hexagon has 6 sides to count around.",
+      pentagon: "A pentagon has 5 sides and 5 corners."
+    };
 
     const welcomeScreen = document.getElementById("welcomeScreen");
     const gameShell = document.getElementById("gameShell");
@@ -1064,9 +1131,12 @@
     const masteryBanner = document.getElementById("masteryBanner");
     const confettiLayer = document.getElementById("confettiLayer");
     const themeToggle = document.getElementById("themeToggle");
+    const coachTip = document.getElementById("coachTip");
+    const coachQueue = document.getElementById("coachQueue");
 
     const game = {
       knownShapes: new Set(),
+      retryQueue: [],
       target: null,
       active: false,
       answered: false,
@@ -1162,6 +1232,28 @@
       return `Find the ${game.target.color.name} ${game.target.shape}!`;
     }
 
+    function shapeFact(shape) {
+      return SHAPE_FACTS[shape] || "Look closely at the corners and sides.";
+    }
+
+    function updateCoachPanel() {
+      if (!game.target) {
+        coachTip.textContent = "Start a round to get a shape tip.";
+        coachQueue.textContent = "";
+        return;
+      }
+
+      coachTip.textContent = shapeFact(game.target.shape);
+      if (game.retryQueue.length > 0) {
+        const queuedShape = game.retryQueue[0];
+        coachQueue.textContent = `Practice focus: ${queuedShape} comes back until it sticks.`;
+      } else if (!game.knownShapes.has(game.target.shape)) {
+        coachQueue.textContent = `New shape focus: learn the ${game.target.shape}.`;
+      } else {
+        coachQueue.textContent = "Review round: keep the streak going.";
+      }
+    }
+
     function createCard(item) {
       const button = document.createElement("button");
       button.type = "button";
@@ -1228,6 +1320,14 @@
       const cardsCount = Math.min(10, 6 + game.knownShapes.size);
       const options = [];
       const used = new Set();
+      const unknownShapes = SHAPES.filter((shape) => !game.knownShapes.has(shape));
+      const retryShape = game.retryQueue[0];
+      const targetShape = retryShape || randomItem(unknownShapes.length > 0 ? unknownShapes : SHAPES);
+      const targetColor = randomItem(COLORS);
+
+      game.target = { shape: targetShape, color: targetColor };
+      options.push(game.target);
+      used.add(`${targetColor.name}-${targetShape}`);
 
       while (options.length < cardsCount) {
         const shape = randomItem(SHAPES);
@@ -1238,17 +1338,12 @@
         options.push({ shape, color });
       }
 
-      const unknownShapes = SHAPES.filter((shape) => !game.knownShapes.has(shape));
-      const preferredOptions = unknownShapes.length > 0
-        ? options.filter((item) => unknownShapes.includes(item.shape))
-        : options;
-
-      game.target = randomItem(preferredOptions.length > 0 ? preferredOptions : options);
       board.innerHTML = "";
       shuffle(options).forEach((item) => board.appendChild(createCard(item)));
 
       const line = challengeLine();
       promptText.textContent = line;
+      updateCoachPanel();
       speak(line);
     }
 
@@ -1291,6 +1386,7 @@
         tile.classList.add("correct");
         const learnedShape = game.target.shape;
         const isNewShape = !game.knownShapes.has(learnedShape);
+        game.retryQueue = game.retryQueue.filter((shape) => shape !== learnedShape);
         const earnedPoints = isNewShape
           ? (game.hintUsed ? 9 : 12)
           : (game.hintUsed ? 6 : 8);
@@ -1308,10 +1404,16 @@
           ? `Awesome! New shape learned: ${label}. +${earnedPoints} points${game.hintUsed ? " with a hint." : "."}`
           : `Awesome! ${label} is already strong. +${earnedPoints} points${game.hintUsed ? " with a hint." : "."}`;
         message.className = "message good";
+        coachQueue.textContent = game.retryQueue.length > 0
+          ? `Nice recovery. ${game.retryQueue[0]} is next in practice.`
+          : `Great work. ${label} is sticking.`;
         speak("Awesome! That's correct.");
       } else {
         tile.classList.add("wrong");
         game.streak = 0;
+        if (!game.retryQueue.includes(game.target.shape)) {
+          game.retryQueue.push(game.target.shape);
+        }
 
         [...board.children].forEach((node) => {
           if (node.dataset.shape === game.target.shape && node.dataset.color === game.target.color.name) {
@@ -1321,11 +1423,13 @@
 
         message.textContent = `Oops! That was ${tile.dataset.color} ${tile.dataset.shape}.`;
         message.className = "message bad";
+        coachQueue.textContent = `We'll practice ${game.target.shape} again next round.`;
         speak(`Try again next round. That was ${tile.dataset.color} ${tile.dataset.shape}.`);
       }
 
       updateScoreboard();
       updateProgress();
+      updateCoachPanel();
       if (game.knownShapes.size === SHAPES.length && !game.masteryCelebrated) {
         game.masteryCelebrated = true;
         message.textContent = "🏆 Master of Shapes! All shapes learned.";
@@ -1342,6 +1446,7 @@
       welcomeScreen.hidden = true;
       gameShell.hidden = false;
       game.knownShapes = new Set();
+      game.retryQueue = [];
       game.masteryCelebrated = false;
       game.score = 0;
       game.streak = 0;
